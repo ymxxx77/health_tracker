@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>饮食记录</title>
+    <style>
+        body {
+            background: #f7fafc;
+            font-family: "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .stat {
+            background: #f0fff4;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .btn {
+            background: #48bb78;
+            color: white;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .btn-del {
+            background: #f56565;
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'home' %}" class="btn">← 返回首页</a>
+    <h2>饮食热量记录</h2>
+
+    <div class="stat">
+        <p>今日摄入总热量：{{ today_in_cal }} 千卡</p>
+        <p>本周摄入总热量：{{ week_in_cal }} 千卡</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {% if diet_edit %}
+        <input type="hidden" name="diet_edit_id" value="{{ diet_edit.id }}">
+        日期：<input type="date" name="date" value="{{ diet_edit.date }}" required>
+        餐次：
+        <select name="meal">
+            <option value="breakfast" {%if diet_edit.meal == 'breakfast' %}selected{% endif %}>早餐</option>
+            <option value="lunch" {%if diet_edit.meal == 'lunch' %}selected{% endif %}>午餐</option>
+            <option value="dinner" {%if diet_edit.meal == 'dinner' %}selected{% endif %}>晚餐</option>
+            <option value="snack" {%if diet_edit.meal == 'snack' %}selected{% endif %}>加餐</option>
+        </select>
+        食物：<input type="text" name="food" value="{{ diet_edit.food }}" required>
+        摄入热量（千卡）：<input type="number" name="calories" value="{{ diet_edit.calories }}" required>
+        <button type="submit" class="btn">保存修改</button>
+        {% else %}
+        <h4>新增饮食记录</h4>
+        日期：<input type="date" name="date" required>
+        餐次：
+           <select name="meal" required>
+               <option value="breakfast" {%if diet_edit.meal == 'breakfast' %}selected{% endif %}>早餐</option>
+               <option value="lunch" {%if diet_edit.meal == 'lunch' %}selected{% endif %}>午餐</option>
+               <option value="dinner" {%if diet_edit.meal == 'dinner' %}selected{% endif %}>晚餐</option>
+               <option value="snack" {%if diet_edit.meal == 'snack' %}selected{% endif %}>加餐</option>
+           </select>
+        食物：<input type="text" name="food" placeholder="例如：米饭、鸡蛋" required>
+        摄入热量（千卡）：<input type="number" name="calories" required>
+        <button type="submit" class="btn">提交记录</button>
+        {% endif %}
+    </form>
+
+    <table>
+        <tr>
+            <th>日期</th>
+            <th>餐次</th>
+            <th>食物</th>
+            <th>摄入热量</th>
+            <th>操作</th>
+        </tr>
+        {% for item in records %}
+        <tr>
+            <td>{{ item.date }}</td>
+            <td>{{ item.meal }}</td>
+            <td>{{ item.food }}</td>
+            <td>{{ item.calories }}千卡</td>
+            <td>
+                <a href="?diet_edit_id={{ item.id }}" class="btn">编辑</a>
+                <a href="?del_diet_id={{ item.id }}" class="btn btn-del" onclick="return confirm('确定删除吗？')">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

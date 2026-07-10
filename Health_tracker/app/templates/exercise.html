@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>运动打卡</title>
+    <style>
+        body {
+            background: #f7fafc;
+            font-family: "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .stat {
+            background: #e6f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .btn {
+            background: #4299e1;
+            color: white;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .btn-del {
+            background: #f56565;
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'home' %}" class="btn">← 返回首页</a>
+    <h2>运动打卡记录</h2>
+
+    <div class="stat">
+        <p>今日运动总时长：{{ today_time }} 分钟 | 今日消耗热量：{{ today_burn }} 千卡</p>
+        <p>本周运动总时长：{{ week_time }} 分钟 | 本周消耗热量：{{ week_burn }} 千卡</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {% if edit %}
+        <input type="hidden" name="edit_id" value="{{ edit.id }}">
+        日期：<input type="date" name="date" value="{{ edit.date }}" required>
+        运动项目：
+           <select name="exercise">
+               <option value="running" {%if edit.exercise == 'running' %}selected{% endif %}>跑步</option>
+               <option value="rope_skip" {%if edit.exercise == 'rope_skip' %}selected{% endif %}>跳绳</option>
+               <option value="yoga" {%if edit.exercise == 'yoga' %}selected{% endif %}>瑜伽</option>
+               <option value="strength" {%if edit.exercise == 'strength' %}selected{% endif %}>力量训练</option>
+               <option value="cycling" {%if edit.exercise == 'cycling' %}selected{% endif %}>骑行</option>
+               <option value="swimming" {%if edit.exercise == 'swimming' %}selected{% endif %}>游泳</option>
+               <option value="dance" {%if edit.exercise == 'dance' %}selected{% endif %}>舞蹈</option>
+               <option value="other" {%if edit.exercise == 'other' %}selected{% endif %}>其他</option>
+           </select>
+        时长（分钟）：<input type="number" name="duration" value="{{ edit.duration }}" required>
+        消耗热量（千卡）：<input type="number" name="calories" value="{{ edit.calories_burned }}" required>
+        <button type="submit" class="btn">保存修改</button>
+        {% else %}
+        <h4>新增运动记录</h4>
+        日期：<input type="date" name="date" required>
+        运动项目：
+        <select name="exercise" required>
+            <option value="">请选择运动项目</option>
+            <option value="running">跑步</option>
+            <option value="rope_skip">跳绳</option>
+            <option value="yoga">瑜伽</option>
+            <option value="strength">力量训练</option>
+            <option value="cycling">骑行</option>
+            <option value="swimming">游泳</option>
+            <option value="dance">舞蹈</option>
+            <option value="other">其他</option>
+        </select>
+        时长（分钟）：<input type="number" name="duration" required>
+        消耗热量（千卡）：<input type="number" name="calories" required>
+        <button type="submit" class="btn">提交记录</button>
+        {% endif %}
+    </form>
+
+    <table>
+        <tr>
+            <th>日期</th>
+            <th>运动项目</th>
+            <th>时长</th>
+            <th>消耗热量</th>
+            <th>操作</th>
+        </tr>
+        {% for item in records %}
+        <tr>
+            <td>{{ item.date }}</td>
+            <td>{{ item.exercise }}</td>
+            <td>{{ item.duration }}分钟</td>
+            <td>{{ item.calories_burned }}千卡</td>
+            <td>
+                <a href="?edit_id={{ item.id }}" class="btn">编辑</a>
+                <a href="?del_id={{ item.id }}" class="btn btn-del" onclick="return confirm('确定删除吗？')">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

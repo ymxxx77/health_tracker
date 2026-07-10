@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>健康管理中心</title>
+    <style>
+        body {
+            background: #f7fafc;
+            font-family: "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .box {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #2d3748;
+        }
+
+        a {
+            display: block;
+            margin: 20px 0;
+            padding: 12px;
+            background: #4299e1;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+            a.logout {
+                background: #f56565;
+            }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>欢迎来到你的健康管理中心</h1>
+        <a href="{% url 'exercise' %}">运动打卡</a>
+        <a href="{% url 'diet' %}">饮食记录</a>
+        <a href="{% url 'logout' %}" class="logout">退出登录</a>
+    </div>
+</body>
+</html>
